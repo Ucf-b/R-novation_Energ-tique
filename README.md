@@ -1,93 +1,246 @@
-# SIA_Efficacity_projet_st7
+# Projet Efficacity - Optimisation Rénovation Énergétique
 
+Optimisation multi-objectifs pour la planification de rénovations énergétiques d'un parc de bâtiments tertiaires (2026-2050).
 
+---
 
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-* [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+## 📁 Structure du projet
 
 ```
-cd existing_repo
-git remote add origin https://gitlab-student.centralesupelec.fr/youssef.ibn-seddik/sia_efficacity_projet_st7.git
-git branch -M main
-git push -uf origin main
+Code_Projet/
+│
+├── Jalons 1 & 2/                          # Approches initiales (Jalons 1 et 2)
+│   ├── Jalon 1.ipynb                      # Optimisation linéaire de base
+│   ├── Jalon 2.ipynb                      # Ajout du graphe de transitions
+│   ├── efficacity_data_v1.xlsx            # Dataset initial (sans durées de travaux)
+│   └── plan_renovation_solution.xlsx      # Résultats Jalon 2
+│
+├── Analyse_gain_maximal/                  # Étude du potentiel maximal théorique
+│   ├── analyse_gain_maximal.py            # Script Python autonome
+│   └── resultats_gain_maximal.xlsx        # Résultats de l'analyse
+│
+├── Archive Jalon 3 approche alternative/  # Versions obsolètes (archivées)
+│   └── Jalon_3_deprecated.ipynb           # Ancienne approche abandonnée
+│
+├── Jalon_3_Graphe_Temporel.ipynb          # Solution finale (graphe temporel)
+├── dataset_efficacity_avec_duree.xlsx     # Dataset complet avec durées de travaux
+├── plan_renovation_graphe_temporel.xlsx   # Plan de rénovation optimal (sortie finale)
+└── README.md                              # Ce fichier
 ```
 
-## Integrate with your tools
+---
 
-* [Set up project integrations](https://gitlab-student.centralesupelec.fr/youssef.ibn-seddik/sia_efficacity_projet_st7/-/settings/integrations)
+## 📄 Description des fichiers
 
-## Collaborate with your team
+### Notebooks d'optimisation
 
-* [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+#### `Jalons 1 & 2/Jalon 1.ipynb`
+**Approche** : Optimisation linéaire classique (MILP)
 
-## Test and Deploy
+**Principe** :
+- Variables binaires `X[b,r,t]` = 1 si rénovation `r` sur bâtiment `b` à l'année `t`
+- Contraintes : budget annuel, disponibilité par catégorie, une rénovation max par bâtiment
+- Objectif : minimiser les écarts aux objectifs 2030/2040/2050
 
-Use the built-in continuous integration in GitLab.
+**Entrées** :
+- `efficacity_data_v1.xlsx` : données calibrées + simulations de rénovations
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+**Sorties** :
+- `plan_renovation_solution.xlsx` : planning de rénovations par bâtiment et année
 
-***
+**Limites** :
+- Une seule rénovation possible par bâtiment sur toute la période
+- Pas de gestion des durées de travaux
 
-# Editing this README
+---
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+#### `Jalons 1 & 2/Jalon 2.ipynb`
+**Approche** : Graphe de transitions entre rénovations
 
-## Suggestions for a good README
+**Innovation** :
+- Construction d'un graphe de compatibilité entre rénovations
+- Transitions possibles : `r → r'` si `Travaux(r) ⊆ Travaux(r')`
+- Coût de transition : `Coût(r→r') = Coût(r') - Coût(r)`
+- Permet plusieurs rénovations successives sur un même bâtiment
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+**Entrées** :
+- `efficacity_data_v1.xlsx`
+- Colonnes de travaux (G à N) pour calculer les compatibilités
 
-## Name
-Choose a self-explaining name for your project.
+**Sorties** :
+- Planning de rénovations avec transitions progressives
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+**Limites** :
+- Toujours pas de gestion temporelle des travaux
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+---
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+#### `Jalon_3_Graphe_Temporel.ipynb` **SOLUTION FINALE**
+**Approche** : Graphe temporel spatio-temporel
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+**Principe** :
+- Nœuds : `(r, t)` = état de rénovation `r` au mois `t`
+- Arêtes d'attente : `(r, t) → (r, t+1)` (coût = 0)
+- Arêtes de transition : `(r, t) → (r', t+d)` où `d` = durée des travaux
+- Contraintes budgétaires mensuelles avec acompte initial (20% par défaut)
+- Contraintes de disponibilité par catégorie par mois
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+**Hyperparamètres configurables** (cellule 2) :
+```python
+acompte = 0.2              # Part d'acompte initial
+duree_optimiste = 0        # 0 = durée totale, 1 = durée incrémentale
+budget_annuel = 2e6        # Budget max par an
+poids_2030/2040/2050       # Pondération des objectifs
+sobriete = 0.2             # Taux de sobriété comportementale
+```
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+**Entrées** :
+- `dataset_efficacity_avec_duree.xlsx` : inclut les durées de travaux (colonne `temps_de_travaux`)
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+**Sorties** :
+- `plan_renovation_graphe_temporel.xlsx` :
+  - Onglet **Plan_Renovation** : calendrier mensuel par bâtiment
+  - Onglet **Détail_Transitions** : liste de toutes les transitions
+  - Onglet **Résumé_Bâtiment** : consommation avant/après
+  - Onglet **Budget_Mensuel** : utilisation du budget mois par mois
+  - Onglet **Objectifs** : suivi 2030/2040/2050
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+---
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+### Scripts Python
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+#### `Analyse_gain_maximal/analyse_gain_maximal.py`
+**Objectif** : Déterminer le gain maximal théorique atteignable
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+**Méthode** :
+- Pour chaque bâtiment, sélectionne la rénovation avec le gain énergétique maximal
+- Calcule la réduction totale maximale possible
+- Compare avec les objectifs 2030/2040/2050
 
-## License
-For open source projects, say how it is licensed.
+**Utilisation** :
+```bash
+cd Analyse_gain_maximal
+python analyse_gain_maximal.py
+```
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+**Entrées** :
+- `../dataset_efficacity_avec_duree.xlsx`
+
+**Sorties** :
+- Console : résumé de l'analyse avec métriques clés
+- `resultats_gain_maximal.xlsx` :
+  - Onglet **Résumé** : métriques principales
+  - Onglet **Meilleures rénovations** : détail par bâtiment
+  - Onglet **Calculateur Sobriété** : tableau Excel interactif
+---
+
+### Datasets
+
+#### `efficacity_data_v1.xlsx` (Jalons 1 & 2)
+**Contenu** :
+- 76 bâtiments (71 rénovables + 5 sans simulations)
+- ~2087 scénarios de rénovation simulés
+
+---
+
+#### `dataset_efficacity_avec_duree.xlsx` (Jalon 3)
+**Contenu** :
+- Identique à `efficacity_data_v1.xlsx` avec ajout :
+  - `temps_de_travaux` : durée des travaux en mois (1-24 mois)
+
+**Utilisation** : Dataset complet pour le Jalon 3 et l'analyse gain maximal
+
+---
+
+### Résultats
+
+#### `plan_renovation_solution.xlsx` (sortie Jalon 2)
+Planning de rénovations généré par l'optimisation linéaire.
+
+#### `resultats_gain_maximal.xlsx` (sortie Analyse gain maximal)
+Analyse théorique du potentiel maximal avec calculateur de sobriété interactif.
+
+#### `plan_renovation_graphe_temporel.xlsx` (sortie Jalon 3)
+Plan de rénovation optimal final avec calendrier mensuel détaillé.
+
+---
+
+### Archive
+
+#### `Archive Jalon 3 approche alternative/Jalon_3_deprecated.ipynb`
+Version obsolète du Jalon 3. Conservée pour référence historique.
+
+**Raison de l'abandon** : Approche remplacée par le graphe temporel (meilleure gestion de mémoire).
+
+---
+
+## 🔧 Prérequis
+
+### Logiciels
+- Python 3.8+
+- Jupyter Notebook / JupyterLab
+- Gurobi Optimizer 11.0+ avec licence valide
+
+### Packages Python
+```
+numpy>=1.21.0
+pandas>=1.3.0
+openpyxl>=3.0.9
+gurobipy>=11.0.0
+jupyter>=1.0.0
+```
+
+### Installation
+```bash
+pip install numpy pandas openpyxl gurobipy jupyter
+```
+
+---
+
+## 🚀 Exécution
+
+### 1. Analyse du gain maximal
+```bash
+cd Analyse_gain_maximal
+python analyse_gain_maximal.py
+```
+
+### 2. Optimisation finale (Jalon 3)
+```bash
+jupyter notebook Jalon_3_Graphe_Temporel.ipynb
+# Exécuter toutes les cellules : Cell > Run All
+```
+
+### 3. Jalons précédents (référence)
+```bash
+cd "Jalons 1 & 2"
+jupyter notebook "Jalon 1.ipynb"
+jupyter notebook "Jalon 2.ipynb"
+```
+
+---
+
+## 📝 Notes techniques
+
+### Gestion du code commenté
+Le code commenté dans les notebooks (ex: génération Excel) est **intentionnel** :
+- Protège les fichiers Excel modifiés manuellement (ajout de graphiques, mise en forme)
+- Évite de les réécrire par erreur lors de nouvelles exécutions
+
+### Preprocessing répété
+Le préprocessing est volontairement **répété dans chaque notebook** :
+- Facilite la compréhension pédagogique
+- Permet d'exécuter chaque jalon indépendamment
+- Aucun impact sur les performances (exécution unique)
+
+---
+
+## 🔗 Références
+
+- Gurobi Documentation : https://www.gurobi.com/documentation/
+- Décret tertiaire : https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000038812251
+
+---
+
+**Dernière mise à jour** : Avril 2026  
+**Version** : 3.0 (Graphe Temporel)
