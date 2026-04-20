@@ -4,7 +4,7 @@ Optimisation multi-objectifs pour la planification de rénovations énergétique
 
 ---
 
-## 📁 Structure du projet
+## Structure du projet
 
 ```
 Code_Projet/
@@ -30,7 +30,7 @@ Code_Projet/
 
 ---
 
-## 📄 Description des fichiers
+## Description des fichiers
 
 ### Notebooks d'optimisation
 
@@ -174,7 +174,7 @@ Version obsolète du Jalon 3. Conservée pour référence historique.
 
 ---
 
-## 🔧 Prérequis
+## Prérequis
 
 ### Logiciels
 - Python 3.8+
@@ -197,7 +197,7 @@ pip install numpy pandas openpyxl gurobipy jupyter
 
 ---
 
-## 🚀 Exécution
+## Exécution
 
 ### 1. Analyse du gain maximal
 ```bash
@@ -220,7 +220,7 @@ jupyter notebook "Jalon 2.ipynb"
 
 ---
 
-## 📝 Notes techniques
+## Notes techniques
 
 ### Gestion du code commenté
 Le code commenté dans les notebooks (ex: génération Excel) est **intentionnel** :
@@ -235,7 +235,7 @@ Le préprocessing est volontairement **répété dans chaque notebook** :
 
 ---
 
-## 🔗 Références
+## Références
 
 - Gurobi Documentation : https://www.gurobi.com/documentation/
 - Décret tertiaire : https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000038812251
